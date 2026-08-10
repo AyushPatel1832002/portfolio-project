@@ -1,9 +1,32 @@
 import {groq} from 'next-sanity'
 
+// Reusable SEO fragment — resolves Sanity image asset URLs inline
+export const seoFragment = groq`
+  seo {
+    metaTitle,
+    metaDescription,
+    keywords,
+    canonicalUrl,
+    noIndex,
+    noFollow,
+    ogTitle,
+    ogDescription,
+    "ogImageUrl": ogImage.asset->url,
+    ogImageAlt,
+    twitterTitle,
+    twitterDescription,
+    "twitterImageUrl": twitterImage.asset->url,
+    twitterCard
+  }
+`
+
 export const siteSettingsQuery = groq`*[_type == "siteSettings"][0]{
   siteName, logoText, metaTitle, metaDescription,
-  favicon, "resumeUrl": resumeFile.asset->url, navLabels
+  favicon, "resumeUrl": resumeFile.asset->url, navLabels,
+  _updatedAt,
+  ${seoFragment}
 }`
+
 
 export const heroQuery = groq`*[_type == "hero"][0]{
   greeting, name, roles, tagline, profileImage,
