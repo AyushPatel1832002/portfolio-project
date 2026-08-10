@@ -13,9 +13,8 @@ const ICONS: Record<string, any> = {
 }
 
 const FALLBACK_SOCIALS = [
-  {key: 'github', icon: FiGithub, url: 'https://github.com', label: 'GitHub'},
-  {key: 'linkedin', icon: FiLinkedin, url: 'https://linkedin.com', label: 'LinkedIn'},
-  {key: 'twitter', icon: FiTwitter, url: 'https://twitter.com', label: 'Twitter'},
+  {key: 'github', icon: FiGithub, url: 'https://github.com/AyushPatel1832002', label: "View Aayush Patel's GitHub profile"},
+  {key: 'linkedin', icon: FiLinkedin, url: 'https://www.linkedin.com/in/ayush-patel-50674224b/', label: 'Connect with Aayush Patel on LinkedIn'},
 ]
 
 export default function Footer({siteName, socials}: {siteName?: string; socials: Social[]}) {
@@ -39,7 +38,7 @@ export default function Footer({siteName, socials}: {siteName?: string; socials:
                 href={s.platform === 'email' ? `mailto:${s.url}` : s.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label={s.platform}
+                aria-label={`Aayush Patel on ${s.platform}`}
                 className="text-muted transition-colors hover:text-teal"
               >
                 <Icon size={20} />

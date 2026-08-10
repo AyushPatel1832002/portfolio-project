@@ -41,11 +41,11 @@ export default function Nav({logoText, labels}: {logoText?: string; labels?: Nav
   return (
     <header className="fixed top-0 left-0 right-0 z-40 border-b border-border bg-ink/80 backdrop-blur-md">
       <div className="mx-auto flex max-w-6xl items-center gap-1 overflow-x-auto px-4 sm:px-6">
-        <a href="#hero" className="mr-4 flex shrink-0 items-center gap-2 py-3 font-mono text-sm text-amber">
+        <a href="#hero" className="mr-4 flex shrink-0 items-center gap-2 py-3 font-mono text-sm text-amber" aria-label="Aayush Patel – Back to top">
           <span className="flex h-2.5 w-2.5 items-center justify-center rounded-full bg-amber" />
           {logoText || 'aayush.tsx'}
         </a>
-        <nav className="flex shrink-0 gap-1">
+        <nav className="flex shrink-0 gap-1" aria-label="Main navigation">
           {order.map((id) => (
             <a
               key={id}

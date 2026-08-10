@@ -34,6 +34,7 @@ export default function Projects({projects}: {projects: Project[]}) {
     <section id="projects" className="section-pad relative border-t border-border/60">
       <div className="mx-auto max-w-6xl px-6">
         <SectionLabel file="projects.tsx" comment="things I've shipped" />
+        <h2 className="sr-only">Featured Projects</h2>
 
         {categories.length > 2 && (
           <div className="mb-10 flex flex-wrap gap-2 font-mono text-xs">
@@ -78,8 +79,9 @@ export default function Projects({projects}: {projects: Project[]}) {
                     {projectImgUrl ? (
                       <Image
                         src={projectImgUrl}
-                        alt={p.title || 'Project'}
+                        alt={`${p.title || 'Project'} – project screenshot`}
                         fill
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                         className="object-cover transition-transform duration-500 group-hover:scale-110"
                       />
                     ) : (
@@ -92,7 +94,7 @@ export default function Projects({projects}: {projects: Project[]}) {
                           target="_blank"
                           rel="noopener noreferrer"
                           className="rounded-full bg-amber p-3 text-ink transition-transform hover:scale-110"
-                          aria-label="Live demo"
+                          aria-label={`View live demo of ${p.title || 'project'}`}
                         >
                           <FiExternalLink />
                         </a>
@@ -103,7 +105,7 @@ export default function Projects({projects}: {projects: Project[]}) {
                           target="_blank"
                           rel="noopener noreferrer"
                           className="rounded-full bg-teal p-3 text-ink transition-transform hover:scale-110"
-                          aria-label="Source code"
+                          aria-label={`View source code of ${p.title || 'project'} on GitHub`}
                         >
                           <FiGithub />
                         </a>

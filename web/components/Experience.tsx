@@ -29,9 +29,10 @@ export default function Experience({experience}: {experience: Exp[]}) {
     <section id="experience" className="section-pad relative border-t border-border/60">
       <div className="mx-auto max-w-4xl px-6">
         <SectionLabel file="experience.tsx" comment="where I've worked" />
+        <h2 className="sr-only">Professional Experience</h2>
         <div className="relative border-l border-border pl-8">
           {(experience || []).map((e, i) => (
-            <motion.div
+            <motion.article
               key={e._id}
               initial={{opacity: 0, x: -20}}
               whileInView={{opacity: 1, x: 0}}
@@ -66,7 +67,7 @@ export default function Experience({experience}: {experience: Exp[]}) {
                   ))}
                 </ul>
               )}
-            </motion.div>
+            </motion.article>
           ))}
         </div>
       </div>

@@ -18,6 +18,7 @@ export default function Education({education}: {education: Edu[]}) {
     <section id="education" className="section-pad relative border-t border-border/60">
       <div className="mx-auto max-w-4xl px-6">
         <SectionLabel file="education.tsx" comment="how I got here" />
+        <h2 className="sr-only">Education</h2>
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           {education.map((e, i) => (
             <motion.div

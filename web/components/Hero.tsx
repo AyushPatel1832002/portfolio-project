@@ -1,6 +1,6 @@
 'use client'
 
-import {useEffect, useState} from 'react'
+import {useEffect, useMemo, useState} from 'react'
 import {motion} from 'framer-motion'
 import Image from 'next/image'
 import {getImageUrl} from '@/sanity/image'
@@ -30,7 +30,7 @@ export default function Hero({
   resumeUrl?: string
   stats?: Stat[]
 }) {
-  const words = roles && roles.length ? roles : ['Full Stack Developer']
+  const words = useMemo(() => (roles && roles.length ? roles : ['Full Stack Developer']), [roles])
   const [wordIndex, setWordIndex] = useState(0)
   const [displayed, setDisplayed] = useState('')
   const [deleting, setDeleting] = useState(false)
@@ -152,7 +152,7 @@ export default function Hero({
           <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-teal/20 via-amber/10 to-violet/20 blur-2xl" />
           <div className="relative h-full w-full overflow-hidden rounded-2xl border border-border bg-surface">
             {profileImgUrl ? (
-              <Image src={profileImgUrl} alt={name || 'Profile photo'} fill className="object-cover" priority />
+              <Image src={profileImgUrl} alt={`${name || 'Aayush Patel'} – Full Stack Developer profile photo`} fill sizes="(max-width: 768px) 90vw, 384px" className="object-cover" priority />
             ) : (
               <div className="flex h-full items-center justify-center font-mono text-muted">no-image.png</div>
             )}

@@ -38,7 +38,7 @@ export default function About({
             className="relative mx-auto aspect-[4/5] w-full max-w-sm overflow-hidden rounded-2xl border border-border bg-surface"
           >
             {aboutImgUrl ? (
-              <Image src={aboutImgUrl} alt="About" fill className="object-cover" />
+              <Image src={aboutImgUrl} alt={`${heading || 'Aayush Patel'} – Full Stack Developer`} fill sizes="(max-width: 768px) 90vw, 384px" className="object-cover" />
             ) : (
               <div className="flex h-full items-center justify-center font-mono text-muted">no-image.png</div>
             )}
