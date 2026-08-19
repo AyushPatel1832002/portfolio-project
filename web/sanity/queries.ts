@@ -68,5 +68,12 @@ export const socialLinksQuery = groq`*[_type == "socialLink"] | order(order asc)
 }`
 
 export const contactQuery = groq`*[_type == "contact"][0]{
-  heading, subheading, email, phone, location, formEndpoint
+  heading, 
+  subheading, 
+  email, 
+  phone, 
+  location,
+  buttonText,
+  successMessage,
+  errorMessage
 }`
