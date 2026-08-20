@@ -2,6 +2,7 @@
 
 import {useState, useRef} from 'react'
 import {motion} from 'framer-motion'
+import emailjs from '@emailjs/browser'
 import {FiMail, FiMapPin, FiPhone} from 'react-icons/fi'
 import SectionLabel from './SectionLabel'
 
@@ -26,64 +27,86 @@ export default function Contact({
   successMessage,
   errorMessage,
 }: ContactProps) {
-  // Debug: Check what props are received
-  console.log('Contact Props:', { heading, subheading, email, phone, location, buttonText })
-  
-  // Use fallback values for null/undefined
-  const finalButtonText = buttonText || 'Send Message'
-  const finalSuccessMessage = successMessage || "Thanks! Your message has been sent successfully. I'll get back to you soon."
-  const finalErrorMessage = errorMessage || 'Something went wrong. Please try again or contact me via email.'
-  
-  const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
-  const [form, setForm] = useState({name: '', email: '', message: ''})
-  const [apiErrorMessage, setApiErrorMessage] = useState<string>('')
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const formRef = useRef<HTMLFormElement>(null)
   const successMessageRef = useRef<HTMLDivElement>(null)
 
-  async function handleSubmit(e: React.FormEvent) {
+  const [status, setStatus] = useState<
+    'idle' | 'sending' | 'sent' | 'error'
+  >('idle')
+
+  const [form, setForm] = useState({
+    name: '',
+    email: '',
+    message: '',
+  })
+
+  const [apiErrorMessage, setApiErrorMessage] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const finalButtonText = buttonText || 'Send Message'
+
+  const finalSuccessMessage =
+    successMessage ||
+    "Thanks! Your message has been sent successfully. I'll get back to you soon."
+
+  const finalErrorMessage =
+    errorMessage ||
+    'Something went wrong. Please try again or contact me via email.'
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    
-    // Prevent duplicate submissions
+
     if (isSubmitting) return
-    
-    // Reset error message
-    setApiErrorMessage('')
+
+    if (!formRef.current) return
+
     setIsSubmitting(true)
     setStatus('sending')
+    setApiErrorMessage('')
 
     try {
-      const res = await fetch('/api/contact', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json', Accept: 'application/json'},
-        body: JSON.stringify(form),
+      await emailjs.sendForm(
+        process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
+        process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
+        formRef.current,
+        {
+          publicKey: process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!,
+        }
+      )
+
+      setStatus('sent')
+
+      setForm({
+        name: '',
+        email: '',
+        message: '',
       })
 
-      const data = await res.json()
-
-      if (res.ok && data.success) {
-        setStatus('sent')
-        // Clear form after successful submission
-        setForm({name: '', email: '', message: ''})
-        // Focus on success message for screen readers
-        setTimeout(() => {
-          successMessageRef.current?.focus()
-        }, 100)
-      } else {
-        setStatus('error')
-        setApiErrorMessage(data.message || finalErrorMessage)
-      }
+      setTimeout(() => {
+        successMessageRef.current?.focus()
+      }, 100)
     } catch (error) {
+      console.error('EmailJS Error:', error)
+
       setStatus('error')
-      setApiErrorMessage('Network error. Please check your connection and try again.')
+      setApiErrorMessage(finalErrorMessage)
     } finally {
       setIsSubmitting(false)
     }
   }
 
   return (
-    <section id="contact" className="section-pad relative border-t border-border/60">
+    <section
+      id="contact"
+      className="section-pad relative border-t border-border/60"
+    >
       <div className="mx-auto max-w-4xl px-6">
-        <SectionLabel file="contact.tsx" comment="get in touch" />
+
+        <SectionLabel
+          file="contact.tsx"
+          comment="get in touch"
+        />
+
         <motion.h2
           initial={{opacity: 0, y: 16}}
           whileInView={{opacity: 1, y: 0}}
@@ -93,68 +116,122 @@ export default function Contact({
         >
           {heading}
         </motion.h2>
-        {subheading && <p className="mt-4 max-w-xl text-muted">{subheading}</p>}
+
+        {subheading && (
+          <p className="mt-4 max-w-xl text-muted">
+            {subheading}
+          </p>
+        )}
 
         <div className="mt-10 grid grid-cols-1 gap-10 md:grid-cols-[0.9fr_1.1fr]">
+
+          {/* Contact Information */}
           <div className="space-y-4 font-mono text-sm">
+
             {email && (
-              <a href={`mailto:${email}`} className="flex items-center gap-3 text-muted transition-colors hover:text-teal">
-                <FiMail /> {email}
+              <a
+                href={`mailto:${email}`}
+                className="flex items-center gap-3 text-muted transition-colors hover:text-teal"
+              >
+                <FiMail />
+                {email}
               </a>
             )}
+
             {phone && (
-              <a href={`tel:${phone}`} className="flex items-center gap-3 text-muted transition-colors hover:text-teal">
-                <FiPhone /> {phone}
+              <a
+                href={`tel:${phone}`}
+                className="flex items-center gap-3 text-muted transition-colors hover:text-teal"
+              >
+                <FiPhone />
+                {phone}
               </a>
             )}
+
             {location && (
               <div className="flex items-center gap-3 text-muted">
-                <FiMapPin /> {location}
+                <FiMapPin />
+                {location}
               </div>
             )}
+
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+          {/* Contact Form */}
+          <form
+            ref={formRef}
+            onSubmit={handleSubmit}
+            className="space-y-4"
+            noValidate
+          >
+
+            {/* Name */}
             <div>
-              <label htmlFor="contact-name" className="mb-1.5 block font-mono text-xs text-muted">
+              <label
+                htmlFor="contact-name"
+                className="mb-1.5 block font-mono text-xs text-muted"
+              >
                 name
               </label>
+
               <input
                 id="contact-name"
-                name="name"
+                name="user_name"
                 type="text"
                 required
                 maxLength={100}
                 value={form.name}
-                onChange={(e) => setForm({...form, name: e.target.value})}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    name: e.target.value,
+                  })
+                }
                 disabled={isSubmitting}
-                className="w-full rounded-md border border-border bg-surface px-4 py-2.5 text-sm text-text outline-none transition-colors focus:border-teal focus:ring-2 focus:ring-teal/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full rounded-md border border-border bg-surface px-4 py-2.5 text-sm text-text outline-none transition-colors focus:border-teal focus:ring-2 focus:ring-teal/20 disabled:cursor-not-allowed disabled:opacity-50"
                 placeholder="Jane Doe"
                 aria-required="true"
               />
             </div>
+
+            {/* Email */}
             <div>
-              <label htmlFor="contact-email" className="mb-1.5 block font-mono text-xs text-muted">
+              <label
+                htmlFor="contact-email"
+                className="mb-1.5 block font-mono text-xs text-muted"
+              >
                 email
               </label>
+
               <input
                 id="contact-email"
-                name="email"
+                name="user_email"
                 type="email"
                 required
                 maxLength={255}
                 value={form.email}
-                onChange={(e) => setForm({...form, email: e.target.value})}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    email: e.target.value,
+                  })
+                }
                 disabled={isSubmitting}
-                className="w-full rounded-md border border-border bg-surface px-4 py-2.5 text-sm text-text outline-none transition-colors focus:border-teal focus:ring-2 focus:ring-teal/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full rounded-md border border-border bg-surface px-4 py-2.5 text-sm text-text outline-none transition-colors focus:border-teal focus:ring-2 focus:ring-teal/20 disabled:cursor-not-allowed disabled:opacity-50"
                 placeholder="jane@email.com"
                 aria-required="true"
               />
             </div>
+
+            {/* Message */}
             <div>
-              <label htmlFor="contact-message" className="mb-1.5 block font-mono text-xs text-muted">
+              <label
+                htmlFor="contact-message"
+                className="mb-1.5 block font-mono text-xs text-muted"
+              >
                 message
               </label>
+
               <textarea
                 id="contact-message"
                 name="message"
@@ -162,48 +239,62 @@ export default function Contact({
                 rows={4}
                 maxLength={5000}
                 value={form.message}
-                onChange={(e) => setForm({...form, message: e.target.value})}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    message: e.target.value,
+                  })
+                }
                 disabled={isSubmitting}
-                className="w-full rounded-md border border-border bg-surface px-4 py-2.5 text-sm text-text outline-none transition-colors focus:border-teal focus:ring-2 focus:ring-teal/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full rounded-md border border-border bg-surface px-4 py-2.5 text-sm text-text outline-none transition-colors focus:border-teal focus:ring-2 focus:ring-teal/20 disabled:cursor-not-allowed disabled:opacity-50"
                 placeholder="Tell me about your project..."
                 aria-required="true"
               />
             </div>
+
+            {/* Submit Button */}
             <button
               type="submit"
-              disabled={isSubmitting || status === 'sending'}
-              className="rounded-md bg-amber px-6 py-3 font-mono text-sm font-medium text-ink transition-transform hover:-translate-y-0.5 disabled:opacity-60 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-amber focus:ring-offset-2"
-              aria-label={status === 'sending' ? 'Sending message' : status === 'sent' ? 'Message sent successfully' : 'Send message'}
+              disabled={isSubmitting}
+              className="rounded-md bg-amber px-6 py-3 font-mono text-sm font-medium text-ink transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60 focus:outline-none focus:ring-2 focus:ring-amber focus:ring-offset-2"
+              aria-label={
+                status === 'sending'
+                  ? 'Sending message'
+                  : status === 'sent'
+                  ? 'Message sent successfully'
+                  : 'Send message'
+              }
             >
               {status === 'sending' && 'Sending...'}
               {status === 'sent' && 'Message Sent ✓'}
               {status === 'error' && 'Try Again'}
               {status === 'idle' && finalButtonText}
             </button>
-            
-            {/* Success message */}
+
+            {/* Success Message */}
             {status === 'sent' && (
-              <div 
+              <div
                 ref={successMessageRef}
                 tabIndex={-1}
                 role="status"
                 aria-live="polite"
-                className="rounded-md bg-teal/10 border border-teal/30 px-4 py-3 font-mono text-sm text-teal"
+                className="rounded-md border border-teal/30 bg-teal/10 px-4 py-3 font-mono text-sm text-teal"
               >
                 {finalSuccessMessage}
               </div>
             )}
-            
-            {/* Error message */}
+
+            {/* Error Message */}
             {status === 'error' && (
-              <div 
+              <div
                 role="alert"
                 aria-live="assertive"
-                className="rounded-md bg-red-400/10 border border-red-400/30 px-4 py-3 font-mono text-xs text-red-400"
+                className="rounded-md border border-red-400/30 bg-red-400/10 px-4 py-3 font-mono text-xs text-red-400"
               >
                 {apiErrorMessage || finalErrorMessage}
               </div>
             )}
+
           </form>
         </div>
       </div>
