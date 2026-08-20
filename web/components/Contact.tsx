@@ -60,19 +60,50 @@ export default function Contact({
 
     if (!formRef.current) return
 
+    // Validate environment variables before submission
+    const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID
+    const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID
+    const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY
+
+    if (!serviceId || !templateId || !publicKey) {
+      console.error('[EmailJS] Configuration Error:', {
+        hasServiceId: !!serviceId,
+        hasTemplateId: !!templateId,
+        hasPublicKey: !!publicKey,
+      })
+      setStatus('error')
+      setApiErrorMessage(
+        'Email service not configured. Please contact the site administrator.'
+      )
+      return
+    }
+
     setIsSubmitting(true)
     setStatus('sending')
     setApiErrorMessage('')
 
+    console.log('[EmailJS] Initiating email send...', {
+      serviceId,
+      templateId,
+      hasPublicKey: !!publicKey,
+      timestamp: new Date().toISOString(),
+    })
+
     try {
-      await emailjs.sendForm(
-        process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
-        process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
+      const result = await emailjs.sendForm(
+        serviceId,
+        templateId,
         formRef.current,
         {
-          publicKey: process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!,
+          publicKey,
         }
       )
+
+      console.log('[EmailJS] Email sent successfully:', {
+        status: result.status,
+        text: result.text,
+        timestamp: new Date().toISOString(),
+      })
 
       setStatus('sent')
 
@@ -85,11 +116,33 @@ export default function Contact({
       setTimeout(() => {
         successMessageRef.current?.focus()
       }, 100)
-    } catch (error) {
-      console.error('EmailJS Error:', error)
+    } catch (error: any) {
+      console.error('[EmailJS] Failed to send email:', {
+        error,
+        errorMessage: error?.message,
+        errorText: error?.text,
+        errorStatus: error?.status,
+        timestamp: new Date().toISOString(),
+      })
 
       setStatus('error')
-      setApiErrorMessage(finalErrorMessage)
+
+      // Provide specific error messages based on error type
+      if (error?.status === 400) {
+        setApiErrorMessage(
+          'Invalid email configuration. Please contact the site administrator.'
+        )
+      } else if (error?.status === 401 || error?.status === 403) {
+        setApiErrorMessage(
+          'Email service authentication failed. Please contact the site administrator.'
+        )
+      } else if (!navigator.onLine) {
+        setApiErrorMessage(
+          'Network error. Please check your internet connection and try again.'
+        )
+      } else {
+        setApiErrorMessage(finalErrorMessage)
+      }
     } finally {
       setIsSubmitting(false)
     }
