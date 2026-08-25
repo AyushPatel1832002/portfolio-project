@@ -30,35 +30,118 @@ export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
 export default async function Home() {
-  const [settings, hero, about, skills, projects, experience, education, services, testimonials, socials, contact] =
-    await Promise.all([
-      client.fetch(siteSettingsQuery, {}, {cache: 'no-store'}).catch(() => null),
-      client.fetch(heroQuery, {}, {cache: 'no-store'}).catch(() => null),
-      client.fetch(aboutQuery, {}, {cache: 'no-store'}).catch(() => null),
-      client.fetch(skillsQuery, {}, {cache: 'no-store'}).catch(() => []),
-      client.fetch(projectsQuery, {}, {cache: 'no-store'}).catch(() => []),
-      client.fetch(experienceQuery, {}, {cache: 'no-store'}).catch(() => []),
-      client.fetch(educationQuery, {}, {cache: 'no-store'}).catch(() => []),
-      client.fetch(servicesQuery, {}, {cache: 'no-store'}).catch(() => []),
-      client.fetch(testimonialsQuery, {}, {cache: 'no-store'}).catch(() => []),
-      client.fetch(socialLinksQuery, {}, {cache: 'no-store'}).catch(() => []),
-      client.fetch(contactQuery, {}, {cache: 'no-store'}).catch(() => null),
-    ])
+  const [
+    settings,
+    hero,
+    about,
+    skills,
+    projects,
+    experience,
+    education,
+    services,
+    testimonials,
+    socials,
+    contact,
+  ] = await Promise.all([
+    client
+      .fetch(siteSettingsQuery, {}, {cache: 'no-store'})
+      .catch(() => null),
+
+    client
+      .fetch(heroQuery, {}, {cache: 'no-store'})
+      .catch(() => null),
+
+    client
+      .fetch(aboutQuery, {}, {cache: 'no-store'})
+      .catch(() => null),
+
+    client
+      .fetch(skillsQuery, {}, {cache: 'no-store'})
+      .catch(() => []),
+
+    client
+      .fetch(projectsQuery, {}, {cache: 'no-store'})
+      .catch(() => []),
+
+    client
+      .fetch(experienceQuery, {}, {cache: 'no-store'})
+      .catch(() => []),
+
+    client
+      .fetch(educationQuery, {}, {cache: 'no-store'})
+      .catch(() => []),
+
+    client
+      .fetch(servicesQuery, {}, {cache: 'no-store'})
+      .catch(() => []),
+
+    client
+      .fetch(testimonialsQuery, {}, {cache: 'no-store'})
+      .catch(() => []),
+
+    client
+      .fetch(socialLinksQuery, {}, {cache: 'no-store'})
+      .catch(() => []),
+
+    client
+      .fetch(contactQuery, {}, {cache: 'no-store'})
+      .catch(() => null),
+  ])
 
   return (
     <main className="relative">
       <CursorSpotlight />
-      <Nav logoText={settings?.logoText} labels={settings?.navLabels} />
-      <Hero {...hero} resumeUrl={settings?.resumeUrl} />
-      <About {...about} />
-      <Skills skills={skills} />
-      <Projects projects={projects} />
-      <Experience experience={experience} />
-      <Education education={education} />
-      <Services services={services} />
-      <Testimonials testimonials={testimonials} />
-      <Contact {...contact} />
-      <Footer siteName={settings?.siteName} socials={socials} />
+
+      <header>
+        <Nav
+          logoText={settings?.logoText || 'Ayush Patel'}
+          labels={settings?.navLabels}
+        />
+      </header>
+
+      <section id="home" aria-label="Ayush Patel - Full Stack Developer">
+        <Hero
+          {...hero}
+          resumeUrl={settings?.resumeUrl}
+        />
+      </section>
+
+      <section id="about" aria-labelledby="about-heading">
+        <About {...about} />
+      </section>
+
+      <section id="skills" aria-labelledby="skills-heading">
+        <Skills skills={skills} />
+      </section>
+
+      <section id="projects" aria-labelledby="projects-heading">
+        <Projects projects={projects} />
+      </section>
+
+      <section id="experience" aria-labelledby="experience-heading">
+        <Experience experience={experience} />
+      </section>
+
+      <section id="education" aria-labelledby="education-heading">
+        <Education education={education} />
+      </section>
+
+      <section id="services" aria-labelledby="services-heading">
+        <Services services={services} />
+      </section>
+
+      <section id="testimonials" aria-labelledby="testimonials-heading">
+        <Testimonials testimonials={testimonials} />
+      </section>
+
+      <section id="contact" aria-labelledby="contact-heading">
+        <Contact {...contact} />
+      </section>
+
+      <Footer
+        siteName={settings?.siteName || 'Ayush Patel'}
+        socials={socials}
+      />
     </main>
   )
 }
