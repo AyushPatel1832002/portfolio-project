@@ -79,10 +79,15 @@ export default function Hero({
             {name || 'Dev Patel'}
           </motion.h1>
 
-          <div className="mt-4 h-10 font-mono text-lg text-amber sm:text-xl md:text-2xl">
+          <motion.div
+            initial={{opacity: 0, y: 12}}
+            animate={{opacity: 1, y: 0}}
+            transition={{duration: 0.55, delay: 0.2}}
+            className="mt-4 h-10 font-mono text-lg text-amber sm:text-xl md:text-2xl"
+          >
             {displayed}
             <span className="ml-0.5 inline-block h-[1.1em] w-[2px] translate-y-[3px] animate-blink bg-amber align-middle" />
-          </div>
+          </motion.div>
 
           <motion.p
             initial={{opacity: 0, y: 16}}
@@ -134,10 +139,15 @@ export default function Hero({
               className="mt-12 flex flex-wrap gap-8"
             >
               {stats.map((s, i) => (
-                <div key={i}>
+                <motion.div
+                  key={i}
+                  initial={{opacity: 0, y: 8}}
+                  animate={{opacity: 1, y: 0}}
+                  transition={{duration: 0.4, delay: 0.6 + i * 0.1}}
+                >
                   <div className="font-display text-2xl font-bold text-text">{s.value}</div>
                   <div className="font-mono text-xs text-muted">{s.label}</div>
-                </div>
+                </motion.div>
               ))}
             </motion.div>
           )}
@@ -149,7 +159,7 @@ export default function Hero({
           transition={{duration: 0.7, delay: 0.2}}
           className="relative mx-auto aspect-square w-full max-w-sm animate-floaty"
         >
-          <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-teal/20 via-amber/10 to-violet/20 blur-2xl" />
+          <div className="hero-glow absolute inset-0 rounded-2xl bg-gradient-to-br from-amber/15 via-amber/10 to-violet/15 blur-2xl" />
           <div className="relative h-full w-full overflow-hidden rounded-2xl border border-border bg-surface">
             {profileImgUrl ? (
               <Image src={profileImgUrl} alt={`${name || 'Aayush Patel'} – Full Stack Developer profile photo`} fill sizes="(max-width: 768px) 90vw, 384px" className="object-cover" priority />

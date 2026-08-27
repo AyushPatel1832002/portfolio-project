@@ -5,15 +5,15 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        ink: '#0A0C10',
-        surface: '#12161F',
-        surface2: '#181D28',
-        border: '#232838',
-        text: '#E7E9EE',
-        muted: '#8A93A6',
-        amber: '#FFB627',
-        teal: '#35D0BA',
-        violet: '#8B7FFF',
+        ink: '#07111F',
+        surface: '#111C2E',
+        surface2: '#0B1628',
+        border: '#243247',
+        text: '#F8FAFC',
+        muted: '#94A3B8',
+        amber: '#FBBF24',
+        teal: '#FBBF24',
+        violet: '#1E40AF',
       },
       fontFamily: {
         display: ['var(--font-display)'],
@@ -21,7 +21,7 @@ const config: Config = {
         mono: ['var(--font-mono)'],
       },
       backgroundImage: {
-        'grid-dots': 'radial-gradient(circle, #1E2432 1px, transparent 1px)',
+        'grid-dots': 'radial-gradient(circle, rgba(36, 50, 71, 0.52) 1px, transparent 1px)',
       },
       keyframes: {
         blink: {

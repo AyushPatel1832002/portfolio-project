@@ -20,6 +20,7 @@ const DEFAULTS: Required<NavLabels> = {
 
 export default function Nav({logoText, labels}: {logoText?: string; labels?: NavLabels}) {
   const [active, setActive] = useState('about')
+  const [scrolled, setScrolled] = useState(false)
   const tabs = {...DEFAULTS, ...labels}
   const order = ['about', 'skills', 'projects', 'experience', 'contact'] as const
 
@@ -38,8 +39,15 @@ export default function Nav({logoText, labels}: {logoText?: string; labels?: Nav
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 12)
+    handleScroll()
+    window.addEventListener('scroll', handleScroll, {passive: true})
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
   return (
-    <header className="fixed top-0 left-0 right-0 z-40 border-b border-border bg-ink/80 backdrop-blur-md">
+    <header className={`nav-enter fixed top-0 left-0 right-0 z-40 border-b border-border backdrop-blur-md transition-colors duration-300 ${scrolled ? 'bg-ink/95' : 'bg-ink/80'}`}>
       <div className="mx-auto flex max-w-6xl items-center gap-1 overflow-x-auto px-4 sm:px-6">
         <a href="#hero" className="mr-4 flex shrink-0 items-center gap-2 py-3 font-mono text-sm text-amber" aria-label="Aayush Patel – Back to top">
           <span className="flex h-2.5 w-2.5 items-center justify-center rounded-full bg-amber" />
@@ -50,7 +58,8 @@ export default function Nav({logoText, labels}: {logoText?: string; labels?: Nav
             <a
               key={id}
               href={`#${id}`}
-              className={`group relative flex items-center gap-2 border-x border-transparent px-4 py-3 font-mono text-xs transition-colors sm:text-sm ${
+              aria-current={active === id ? 'page' : undefined}
+              className={`nav-link group relative flex items-center gap-2 border-x border-transparent px-4 py-3 font-mono text-xs transition-colors sm:text-sm ${
                 active === id ? 'border-border bg-surface text-text' : 'text-muted hover:text-text'
               }`}
             >

@@ -8,7 +8,7 @@ export default function CursorSpotlight() {
   useEffect(() => {
     const handleMove = (e: MouseEvent) => {
       if (!ref.current) return
-      ref.current.style.background = `radial-gradient(600px circle at ${e.clientX}px ${e.clientY}px, rgba(53,208,186,0.08), transparent 40%)`
+      ref.current.style.background = `radial-gradient(420px circle at ${e.clientX}px ${e.clientY}px, rgba(251,191,36,0.055), transparent 42%)`
     }
     window.addEventListener('mousemove', handleMove)
     return () => window.removeEventListener('mousemove', handleMove)
